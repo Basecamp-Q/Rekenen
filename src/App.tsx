@@ -206,7 +206,7 @@ const ProgressGoals = styled.div`
 
 function App() {
   const [score, setScore] = useState(0);
-  const [currentProblem, setCurrentProblem] = useState({ num1: 0, num2: 0, operator: '+' });
+  const [currentProblem, setCurrentProblem] = useState({ num1: 0, num2: 0, operator: '+', type: 'normal' });
   const [userAnswer, setUserAnswer] = useState('');
   const [difficulty, setDifficulty] = useState('easy');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -214,26 +214,104 @@ function App() {
 
   const generateProblem = useCallback(() => {
     let maxNum;
+    let num1, num2, operator, type;
+    const operators = ['+', '-', '×', '÷', '%'];
+    
     switch (difficulty) {
-      case 'easy':
-        maxNum = 10;
-        break;
-      case 'medium':
+      case 'easy': // Pupillen
         maxNum = 20;
+        operator = operators[Math.floor(Math.random() * 3)]; // Alleen +, - en ×
+        num1 = Math.floor(Math.random() * maxNum) + 1;
+        num2 = Math.floor(Math.random() * maxNum) + 1;
+        
+        // Zorg dat aftrekken geen negatief getal oplevert
+        if (operator === '-' && num2 > num1) {
+          [num1, num2] = [num2, num1];
+        }
+        
+        // Maak vermenigvuldigen makkelijker
+        if (operator === '×') {
+          num2 = Math.floor(Math.random() * 10) + 1;
+        }
+        
+        type = 'normal';
         break;
-      case 'hard':
-        maxNum = 50;
+
+      case 'medium': // Junioren
+        maxNum = 100;
+        operator = operators[Math.floor(Math.random() * 4)]; // Nu ook ÷ erbij
+        
+        if (operator === '÷') {
+          // Maak deelsommen die op heel getal uitkomen
+          num2 = Math.floor(Math.random() * 10) + 2; // deler tussen 2 en 11
+          num1 = num2 * (Math.floor(Math.random() * 10) + 1); // vermenigvuldig met getal tussen 1 en 10
+        } else {
+          num1 = Math.floor(Math.random() * maxNum) + 1;
+          num2 = Math.floor(Math.random() * maxNum) + 1;
+          
+          if (operator === '-' && num2 > num1) {
+            [num1, num2] = [num2, num1];
+          }
+          
+          if (operator === '×') {
+            num2 = Math.floor(Math.random() * 12) + 1; // Tafels t/m 12
+          }
+        }
+        
+        // 25% kans op een breuksom
+        if (Math.random() < 0.25) {
+          type = 'fraction';
+          num1 = Math.floor(Math.random() * 8) + 2; // noemer tussen 2 en 9
+          operator = 'breuk';
+        } else {
+          type = 'normal';
+        }
         break;
+
+      case 'hard': // Champions League
+        maxNum = 1000;
+        operator = operators[Math.floor(Math.random() * operators.length)]; // Alle operatoren
+        
+        if (operator === '%') {
+          // Percentagesommen
+          const percentages = [10, 20, 25, 50, 75];
+          num1 = Math.floor(Math.random() * 200) + 1; // Getal tussen 1 en 200
+          num2 = percentages[Math.floor(Math.random() * percentages.length)];
+        } else if (operator === '÷') {
+          num2 = Math.floor(Math.random() * 12) + 2; // deler tussen 2 en 13
+          num1 = num2 * (Math.floor(Math.random() * 20) + 1); // vermenigvuldig met getal tussen 1 en 20
+        } else {
+          num1 = Math.floor(Math.random() * maxNum) + 1;
+          num2 = Math.floor(Math.random() * maxNum) + 1;
+          
+          if (operator === '-' && num2 > num1) {
+            [num1, num2] = [num2, num1];
+          }
+          
+          if (operator === '×') {
+            num2 = Math.floor(Math.random() * 20) + 1; // Grotere tafels
+          }
+        }
+        
+        // 33% kans op een breuksom
+        if (Math.random() < 0.33) {
+          type = 'fraction';
+          num1 = Math.floor(Math.random() * 8) + 2; // noemer tussen 2 en 9
+          operator = 'breuk';
+        } else {
+          type = operator === '%' ? 'percentage' : 'normal';
+        }
+        break;
+
       default:
-        maxNum = 10;
+        maxNum = 20;
+        num1 = Math.floor(Math.random() * maxNum) + 1;
+        num2 = Math.floor(Math.random() * maxNum) + 1;
+        operator = '+';
+        type = 'normal';
     }
 
-    const num1 = Math.floor(Math.random() * maxNum) + 1;
-    const num2 = Math.floor(Math.random() * maxNum) + 1;
-    const operators = ['+', '-', '×'];
-    const operator = operators[Math.floor(Math.random() * operators.length)];
-
-    setCurrentProblem({ num1, num2, operator });
+    setCurrentProblem({ num1, num2, operator, type });
     setUserAnswer('');
     setShowSuccess(false);
   }, [difficulty]);
@@ -251,21 +329,39 @@ function App() {
 
   const checkAnswer = () => {
     let correctAnswer;
-    switch (currentProblem.operator) {
-      case '+':
-        correctAnswer = currentProblem.num1 + currentProblem.num2;
+    let userGuess = parseFloat(userAnswer);
+
+    switch (currentProblem.type) {
+      case 'percentage':
+        correctAnswer = (currentProblem.num1 * currentProblem.num2) / 100;
         break;
-      case '-':
-        correctAnswer = currentProblem.num1 - currentProblem.num2;
-        break;
-      case '×':
-        correctAnswer = currentProblem.num1 * currentProblem.num2;
+      case 'fraction':
+        correctAnswer = 1 / currentProblem.num1;
+        // Rond af op 2 decimalen voor breuken
+        if (Math.abs(userGuess - correctAnswer) < 0.01) {
+          userGuess = correctAnswer;
+        }
         break;
       default:
-        correctAnswer = 0;
+        switch (currentProblem.operator) {
+          case '+':
+            correctAnswer = currentProblem.num1 + currentProblem.num2;
+            break;
+          case '-':
+            correctAnswer = currentProblem.num1 - currentProblem.num2;
+            break;
+          case '×':
+            correctAnswer = currentProblem.num1 * currentProblem.num2;
+            break;
+          case '÷':
+            correctAnswer = currentProblem.num1 / currentProblem.num2;
+            break;
+          default:
+            correctAnswer = 0;
+        }
     }
 
-    if (parseInt(userAnswer) === correctAnswer) {
+    if (userGuess === correctAnswer) {
       const newConsecutive = consecutiveCorrect + 1;
       setConsecutiveCorrect(newConsecutive);
       setScore(score + 1);
@@ -332,10 +428,17 @@ function App() {
       </ProgressContainer>
       <GameContainer>
         <Problem>
-          {currentProblem.num1} {currentProblem.operator} {currentProblem.num2} = ?
+          {currentProblem.type === 'percentage' ? (
+            `${currentProblem.num2}% van ${currentProblem.num1} = ?`
+          ) : currentProblem.type === 'fraction' ? (
+            `Wat is 1/${currentProblem.num1} als decimaal getal?`
+          ) : (
+            `${currentProblem.num1} ${currentProblem.operator} ${currentProblem.num2} = ?`
+          )}
         </Problem>
         <Input
           type="number"
+          step="0.01"
           value={userAnswer}
           onChange={(e) => setUserAnswer(e.target.value)}
           onKeyPress={handleKeyPress}
