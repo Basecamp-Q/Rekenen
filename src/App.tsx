@@ -6,7 +6,7 @@ const AppContainer = styled.div`
   margin: 0 auto;
   padding: 20px;
   text-align: center;
-  font-family: 'Comic Sans MS', cursive;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: #e8f4e8;
   min-height: 100vh;
   background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
@@ -18,6 +18,8 @@ const Title = styled.h1`
   color: #2E7D32;
   font-size: 2.5em;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
 `;
 
 const GameContainer = styled.div`
@@ -35,6 +37,8 @@ const Problem = styled.div`
   color: #1B5E20;
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="%234CAF50" style="opacity:0.1"/></svg>') center/contain no-repeat;
   padding: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
 `;
 
 const Input = styled.input`
@@ -45,6 +49,7 @@ const Input = styled.input`
   border: 2px solid #4CAF50;
   border-radius: 5px;
   margin: 10px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   &:focus {
     outline: none;
     border-color: #2E7D32;
@@ -62,6 +67,8 @@ const Button = styled.button`
   cursor: pointer;
   margin: 10px;
   transition: transform 0.1s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
   
   &:hover {
     background-color: #45a049;
@@ -81,6 +88,8 @@ const Score = styled.div`
   align-items: center;
   justify-content: center;
   gap: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
 
   &::before {
     content: "⚽";
@@ -89,18 +98,6 @@ const Score = styled.div`
 
 const DifficultySelector = styled.div`
   margin: 20px 0;
-`;
-
-const SuccessMessage = styled.div`
-  color: #4CAF50;
-  font-size: 1.5em;
-  margin: 10px 0;
-  animation: bounce 0.5s;
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
 `;
 
 const CategoryBadge = styled.div`
@@ -112,6 +109,8 @@ const CategoryBadge = styled.div`
   margin: 10px 0;
   font-size: 1.2em;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
 
   &::before {
     content: "⚽";
@@ -121,6 +120,20 @@ const CategoryBadge = styled.div`
   &::after {
     content: "⚽";
     margin-left: 8px;
+  }
+`;
+
+const SuccessMessage = styled.div`
+  color: #4CAF50;
+  font-size: 1.5em;
+  margin: 10px 0;
+  animation: bounce 0.5s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
 `;
 
@@ -177,6 +190,7 @@ const ProgressText = styled.div`
   font-size: 1.1em;
   color: #2E7D32;
   font-weight: bold;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 `;
 
 const ProgressGoals = styled.div`
@@ -186,6 +200,8 @@ const ProgressGoals = styled.div`
   padding: 0 15px;
   font-size: 0.9em;
   color: #2E7D32;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
 `;
 
 function App() {
